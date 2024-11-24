@@ -36,7 +36,6 @@ CREATE TABLE `items_for_sale` (
   `price` decimal(10,2) NOT NULL DEFAULT 0.00,
   `image` longtext NOT NULL,
   PRIMARY KEY (`id`)
-  `sold` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -98,11 +97,6 @@ INSERT INTO `wishlist` (`id`, `userId`, `item`) VALUES
 -- Indexes for dumped tables
 --
 
---
--- Indexes for table `items_for_sale`
---
-ALTER TABLE `items_for_sale`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `notifications`
