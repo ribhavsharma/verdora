@@ -16,6 +16,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 const Navbar = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [user, setUser] = useState<string | null>(null);
+  const [notifications, setNotifications] = useState(0);
+  const [notifItems, setNotifItems]= useState([]);
 
   useEffect(() => {
     const signedIn = localStorage.getItem("auth");
@@ -23,7 +25,23 @@ const Navbar = () => {
     if (signedIn && userData) { 
       setIsSignedIn(true);
       setUser(userData);
+
+      // get notifications
+      fetch("http://127.0.0.1:8000/getNotifications", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: userData }),
+      }).then((response) => response.json())
+      .then((data) => {
+        setNotifications(data[0]);
+        setNotifItems(data[1]);
+        console.log(data[1]);
+      })
     }
+
+
   }, []);
 
   const logOut = () => {
@@ -46,6 +64,14 @@ const Navbar = () => {
     </>
   );
 
+  const handleNotifClick = (item: any) => {
+    window.location.href = "/marketplace/" +item[0][0]
+  }
+
+  const notifClick = () => {
+    alert(1);
+  }
+
   return (
     <nav className="bg-[#226f54] shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -55,9 +81,43 @@ const Navbar = () => {
             </div>
           <div className="hidden md:flex items-center space-x-4">
             <NavLinks />
-            <Button variant="ghost" size="icon" className="text-[#f4f0bb] hover:text-[#87c38f] hover:bg-[#226f54]">
-              <Bell className="h-5 w-5" />
-            </Button>
+            <div className="relative">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-[#f4f0bb] hover:text-[#87c38f] hover:bg-[#226f54]"
+                      onClick={() => notifClick}
+                    >
+                      <Bell className="h-5 w-5" />
+                    </Button>
+                    
+                    {notifications > 0 && (
+                      <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+                        {notifications}
+                      </span>
+                    )}
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  {notifItems.map((item, index) => (
+                    <DropdownMenuItem
+                      key={index}
+                      className="cursor-pointer flex items-center space-x-3"
+                      onSelect={() => handleNotifClick(item)}
+                    >
+                      {/* Display the image */}
+                      <img src={item[0][6]} alt={item[0][1]} className="w-6 h-6 rounded-full" />
+                      {/* Display the item name */}
+                      <span>{item[0][1]}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
             {isSignedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
