@@ -182,7 +182,16 @@ def get_notif(request: dict):
     notif = mysql.select_data("notifications",
                               where_clause=f"userId = '{userId}'")
 
-    count_unseen = sum(1 for item in notif if item[-1] == 0)
+    unseen_items = [item for item in notif if item[-1] == 0]
+    items = []
+    for item in notif:
+        itemId = item[2]
+        item_details = mysql.select_data(
+            "items_for_sale",
+            where_clause=f"id = '{itemId}'"
+        )
+        items.append(item_details)
 
+    print(items)
     mysql.close_connection()
-    return count_unseen
+    return len(unseen_items)
