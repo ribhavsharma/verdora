@@ -43,3 +43,14 @@ class MysqlManager:
         values = tuple(data.values())
         self.cursor.execute(query, values)
         self.conn.commit()
+
+    def get_user_id(self, username):
+        userId = self.select_data(
+            "users",
+            "id",
+            where_clause=f"username = '{username}'"
+        )
+
+        if len(userId)==0:
+            return 1
+        return userId
