@@ -36,6 +36,7 @@ CREATE TABLE `items_for_sale` (
   `user_name` text NOT NULL,
   `date` datetime NOT NULL DEFAULT current_timestamp(),
   `sold` tinyint(1) NOT NULL DEFAULT 0,
+  `price` decimal(10,2) NOT NULL DEFAULT 0.00,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

@@ -33,6 +33,9 @@ class UserUpdateRequest(BaseModel):
     username: str
     email: str
     phone_number: str
+    
+class ItemDetailsRequest(BaseModel):
+    itemId: int
 
 @app.post("/signUp")
 def sign_up(request: SignupRequest):
@@ -118,3 +121,54 @@ def sell_item(request: dict):
         
     mysql.close_connection()
     return {"message": "Item added successfully"}
+
+@app.post("/getItemDetails")
+def get_item_details(request: ItemDetailsRequest):
+    item_id = request.itemId
+    if not item_id:
+        return {"message": "Item ID is required"}
+    
+    mysql = MysqlManager()
+    
+     # Fetch item details
+    item_details = mysql.select_data(
+        "items_for_sale",
+        "category, price, user_name",
+        where_clause=f"id = {item_id}"
+    )
+
+    if not item_details:
+        mysql.close_connection()
+        return {"message": "Item not found"}
+
+    item_detail = item_details[0]
+    category = item_detail[0]
+    price = item_detail[1]
+    user_name = item_detail[2]
+
+    # Fetch user details
+    user_details = mysql.select_data(
+        "users",
+        "email, phone_number",
+        where_clause=f"username = '{user_name}'"
+    )
+
+    if not user_details:
+        mysql.close_connection()
+        return {"message": "User details not found for this item"}
+
+    user_detail = user_details[0]
+    email = user_detail[0]
+    phone_number = user_detail[1]
+
+    mysql.close_connection()
+
+    return {
+        "category": category,
+        "price": str(price),
+        "seller_contact": {
+            "username": user_name,
+            "email": email,
+            "phone_number": phone_number,
+        },
+    }
