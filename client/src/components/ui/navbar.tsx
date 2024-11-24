@@ -37,6 +37,9 @@ const Navbar = () => {
       <Link href="/classify" className="text-[#87c38f] md:text-[#f4f0bb] hover:text-[#87c38f] transition-colors">
         Home
       </Link>
+      <Link href="/marketplace" className="text-[#87c38f] md:text-[#f4f0bb] hover:text-[#87c38f] transition-colors">
+        Marketplace
+      </Link>
       <Link href="/about" className="text-[#87c38f] md:text-[#f4f0bb] hover:text-[#87c38f] transition-colors">
         About
       </Link>
