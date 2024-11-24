@@ -6,13 +6,17 @@ class MysqlManager:
         self.conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="ribhav",
+            password="",
             database="verdora",
-            port="3306",
+            port="3310",
             ssl_disabled=True
         )
 
         self.cursor = self.conn.cursor()
+
+    def close_connection(self):
+        self.cursor.close()
+        self.conn.close()
 
     def insert_data(self, table, data):
         columns = ", ".join(data.keys())

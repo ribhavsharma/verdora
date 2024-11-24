@@ -40,9 +40,6 @@ const Navbar = () => {
       <Link href="/about" className="text-[#87c38f] md:text-[#f4f0bb] hover:text-[#87c38f] transition-colors">
         About
       </Link>
-      <Link href="/contact" className="text-[#87c38f] md:text-[#f4f0bb] hover:text-[#87c38f] transition-colors">
-        Contact
-      </Link>
     </>
   );
 

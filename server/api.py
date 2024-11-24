@@ -7,7 +7,6 @@ from fastapi.middleware.cors import CORSMiddleware
 import datetime
 
 app = FastAPI()
-mysql = MysqlManager()
 
 origins = ["*"]
 
@@ -37,25 +36,31 @@ class UserUpdateRequest(BaseModel):
 
 @app.post("/signUp")
 def sign_up(request: SignupRequest):
+    mysql = MysqlManager()
     hashed_password = hashlib.md5(request.password.encode()).hexdigest()
     mysql.insert_data(
         "users",
         {"username": request.username, "password": hashed_password}
     )
+    mysql.close_connection()
     return {"message": "User signed up successfully", "username": request.username}
 
 @app.post("/signIn")
 def sign_in(request: SignupRequest):
+    mysql = MysqlManager()
     hashed_password = hashlib.md5(request.password.encode()).hexdigest()
     signInDb = mysql.select_data(
         "users",
         "password",
         where_clause=f"username = '{request.username}' AND password = '{hashed_password}'"
     )
+    mysql.close_connection()
     return {1 if signInDb else 0}
 
 @app.post("/userDetails")
 def get_user_details(request: UserDetailsRequest):
+
+    mysql = MysqlManager()
     user_details = mysql.select_data(
         "users",
         "username, email, phone_number",
@@ -73,7 +78,7 @@ def get_user_details(request: UserDetailsRequest):
     
     # Format the listings
     listings = [{"category": listing[0]} for listing in user_listings]
-    
+    mysql.close_connection()
     return {
         "name": user_detail[0],
         "email": user_detail[1],
@@ -84,11 +89,14 @@ def get_user_details(request: UserDetailsRequest):
     
 @app.post("/updateUser")
 def update_user(request: UserUpdateRequest):
+
+    mysql = MysqlManager()
     mysql.update_data(
         "users",
         {"email": request.email, "phone_number": request.phone_number},
         f"username = '{request.username}'"
     )
+    mysql.close_connection()
     return {"message": "User details updated successfully"}
 
 @app.post("/image")
@@ -98,6 +106,8 @@ def image(request: ImageRequest):
 
 @app.post("/sellItem")
 def sell_item(request: dict):
+
+    mysql = MysqlManager()
     mysql.insert_data(
         "items_for_sale",
         {
@@ -106,5 +116,5 @@ def sell_item(request: dict):
         }
     )
         
-    
+    mysql.close_connection()
     return {"message": "Item added successfully"}
