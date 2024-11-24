@@ -1,0 +1,120 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f0bb;
+    color: #226f54;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #226f54; 
+    color: #f4f0bb; 
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .navbar a {
+    color: #f4f0bb; 
+    text-decoration: none;
+    margin: 0 10px;
+    font-weight: bold;
+  }
+  
+  .navbar a:hover {
+    color: #87c38f; 
+  }
+  
+  /* Product List */
+  .product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 2rem;
+    margin-bottom: 80px;
+  }
+  
+  /* Product Card */
+ .product-cards-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 20px;
+ }
+ 
+  .product-card {
+    background-color: #87c38f;
+    border: 2px solid #226f54; 
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .product-card img {
+    max-width: 80%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+  
+  .product-card h3 {
+    margin: 0.5rem 0;
+    font-size: 1.2rem;
+    color: #226f54; 
+  }
+  
+  .product-card p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    color: #226f54; 
+  }
+  
+  .product-card button {
+    background-color: #226f54; 
+    color: #f4f0bb; 
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .product-card button:hover {
+    background-color: #87c38f; 
+    color: #226f54; 
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  
+  /* Utility Classes */
+
+.text-center {
+    text-align: center;
+}
+
+.container {
+    padding: 2rem;
+}
+
+.home-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.welcome-text {
+  font-size: 2rem;
+  color: #226f54;
+  margin-bottom: 2rem;
+  text-align: center;
+  width: 100%;
+}
