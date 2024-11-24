@@ -64,10 +64,22 @@ def get_user_details(request: UserDetailsRequest):
     if not user_details:
         return {"message": "User not found"}
     user_detail = user_details[0]
+    
+    user_listings = mysql.select_data(
+        "items_for_sale",
+        "category",
+        where_clause=f"user_name = '{request.username}'"
+    )
+    
+    # Format the listings
+    listings = [{"category": listing[0]} for listing in user_listings]
+    
     return {
         "name": user_detail[0],
         "email": user_detail[1],
-        "phone_number": user_detail[2]
+        "phone_number": user_detail[2],
+        "listings": listings
+        
     }
     
 @app.post("/updateUser")
