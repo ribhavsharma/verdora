@@ -13,3 +13,4 @@ typing-extensions
 huggingface_hub
 fastai
 fastcore
+torch
