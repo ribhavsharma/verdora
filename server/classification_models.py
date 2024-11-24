@@ -532,5 +532,12 @@ def flag_ewaste_base64(encoding):
   file_name = save_base64_to_temp_file(encoding)
   return flag_ewaste(file_name, recycling_models)
 
-print(classify("sample_images/random.jpg", model, clothing_model, recycling_models))
-print(flag_ewaste("sample_images/random.jpg", recycling_models))
+# Examples
+current_dir = os.path.join(os.getcwd(), 'sample_images')
+
+# Loop through all files in the directory
+for file in current_dir.iterdir():
+    # Only process image files (you can customize this by checking extensions)
+    if file.is_file() and file.suffix.lower() in ['.jfif','.jpg', '.jpeg', '.png', '.webp']:
+        print(classify(file, model, clothing_model, recycling_models))
+        pprint(flag_ewaste(file, recycling_models))

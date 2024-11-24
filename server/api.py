@@ -210,8 +210,8 @@ async def perform_inference(request: ImageRequest):
 
     results = classify_base64(request.image)
     ewaste_flag = flag_ewaste_base64(request.image)
-    # Return the response object
-    return {"annotations": results, "ewaste_flag": (True, 0.79)}
+
+    return {"annotations": results, "ewaste_flag": ewaste_flag}
 
 @app.post("/getItemDetails")
 def get_item_details(request: ItemDetailsRequest):
@@ -284,3 +284,4 @@ def mark_as_sold(request: ItemDetailsRequest):
     )
     mysql.close_connection()
     return {"message": "Item marked as sold"}
+
