@@ -59,111 +59,114 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="w-full py-16">
-        <div className="container mx-auto text-center">
-          <h2 className="text-4xl font-bold text-[#226f54] mb-10">
-            Features You'll Love
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-6 bg-gray-100 shadow-md rounded-lg">
-              <h3 className="text-2xl font-semibold text-[#226f54] mb-4">
-                Seamless Integration
-              </h3>
-              <p className="text-gray-600">
-                Easily connect Verdora to your favorite apps and tools to create
-                a unified workflow.
-              </p>
-            </div>
-            <div className="p-6 bg-gray-100 shadow-md rounded-lg">
-              <h3 className="text-2xl font-semibold text-[#226f54] mb-4">
-                Time-Saving Automation
-              </h3>
-              <p className="text-gray-600">
-                Automate repetitive tasks and focus on what matters most with
-                our intelligent solutions.
-              </p>
-            </div>
-            <div className="p-6 bg-gray-100 shadow-md rounded-lg">
-              <h3 className="text-2xl font-semibold text-[#226f54] mb-4">
-                Enhanced Productivity
-              </h3>
-              <p className="text-gray-600">
-                Get more done in less time with Verdora's productivity-enhancing
-                features.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <section className="w-full py-16 px-24 md:px-24">
+  <div className="container mx-auto">
+    <h2 className="text-4xl font-bold text-[#226f54] mb-10 text-left">
+      Features You'll Love
+    </h2>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="bg-gray-100 shadow-sm border rounded-lg p-6">
+        <h3 className="text-2xl font-semibold text-[#226f54] mb-4">
+          Smart Waste Classification
+        </h3>
+        <p className="text-gray-600">
+          Take a photo of your waste, and Verdora uses advanced AI to classify
+          it into categories like recyclable materials, e-waste, clothing, and
+          more.
+        </p>
+      </div>
+      <div className="bg-gray-100 shadow-sm border rounded-lg p-6">
+        <h3 className="text-2xl font-semibold text-[#226f54] mb-4">
+          Connect with Buyers
+        </h3>
+        <p className="text-gray-600">
+          Turn your trash into treasure by connecting with potential buyers or
+          recyclers who are interested in your classified items.
+        </p>
+      </div>
+      <div className="bg-gray-100 shadow-sm border rounded-lg p-6">
+        <h3 className="text-2xl font-semibold text-[#226f54] mb-4">
+          Promote Sustainability
+        </h3>
+        <p className="text-gray-600">
+          Reduce waste and promote a circular economy by ensuring items are
+          recycled, reused, or sold rather than sent to landfills.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
 
-      {/* FAQ Section */}
-      <section className="w-full py-16 bg-gray-50">
-        <div className="container mx-auto text-center">
-          <h2 className="text-4xl font-bold text-[#226f54] mb-10">
-            Frequently Asked Questions
-          </h2>
-          <div className="space-y-8 max-w-4xl mx-auto">
-            <div className="text-left">
-              <h3 className="text-xl font-semibold text-[#226f54] mb-2">
-                What is Verdora?
-              </h3>
-              <p className="text-gray-600">
-                Verdora is a platform that helps you automate workflows and
-                integrate tools to streamline your productivity.
-              </p>
-            </div>
-            <div className="text-left">
-              <h3 className="text-xl font-semibold text-[#226f54] mb-2">
-                Is Verdora free to use?
-              </h3>
-              <p className="text-gray-600">
-                Verdora offers both free and premium plans. The free plan
-                includes basic features, while premium plans unlock advanced
-                tools and integrations.
-              </p>
-            </div>
-            <div className="text-left">
-              <h3 className="text-xl font-semibold text-[#226f54] mb-2">
-                Can I integrate Verdora with other apps?
-              </h3>
-              <p className="text-gray-600">
-                Yes! Verdora supports integration with popular tools like Google
-                Drive, Notion, Zapier, and more.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+{/* FAQ Section */}
+<section className="w-full py-16 px-24 md:px-24">
+  <div className="container mx-auto">
+    <h2 className="text-4xl font-bold text-[#226f54] mb-10 text-left">
+      Frequently Asked Questions
+    </h2>
+    <div className="space-y-8 max-w-4xl">
+      <div className="bg-white shadow-sm border rounded-lg p-6">
+        <h3 className="text-xl font-semibold text-[#226f54] mb-2">
+          What is Verdora?
+        </h3>
+        <p className="text-gray-600">
+          Verdora is a sustainability platform that helps you classify waste
+          using AI and connects you with buyers or recyclers, turning waste into
+          opportunities while promoting eco-friendly practices.
+        </p>
+      </div>
+      <div className="bg-white shadow-sm border rounded-lg p-6">
+        <h3 className="text-xl font-semibold text-[#226f54] mb-2">
+          How does Verdora classify waste?
+        </h3>
+        <p className="text-gray-600">
+          Using advanced image recognition technology, Verdora identifies
+          categories like recyclable items, e-waste, compostable materials, and
+          more from a simple photo of the waste.
+        </p>
+      </div>
+      <div className="bg-white shadow-sm border rounded-lg p-6">
+        <h3 className="text-xl font-semibold text-[#226f54] mb-2">
+          Can I sell items on Verdora?
+        </h3>
+        <p className="text-gray-600">
+          Yes! Verdora helps you connect with buyers or recyclers who may be
+          interested in purchasing or reusing your items, promoting a circular
+          economy.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
 
-      {/* Footer Section */}
-      <footer className="w-full bg-gray-800 text-gray-400 py-6">
-        <div className="container mx-auto text-center">
-          <p className="mb-4">
-            Made with ❤️ by the Verdora Team. © 2024 Verdora, Inc. All rights
-            reserved.
-          </p>
-          <div className="flex justify-center space-x-6">
-            <a
-              href="/about"
-              className="hover:text-white transition-colors duration-300"
-            >
-              About Us
-            </a>
-            <a
-              href="/terms"
-              className="hover:text-white transition-colors duration-300"
-            >
-              Terms of Service
-            </a>
-            <a
-              href="/privacy"
-              className="hover:text-white transition-colors duration-300"
-            >
-              Privacy Policy
-            </a>
-          </div>
-        </div>
-      </footer>
+{/* Footer Section */}
+<footer className="w-full bg-gray-800 text-gray-400 py-6">
+  <div className="container mx-auto text-center">
+    <p className="mb-4">
+      Made with ❤️ to promote sustainability by the Verdora Team. © 2024 Verdora,
+      Inc. All rights reserved.
+    </p>
+    <div className="flex justify-center space-x-6">
+      <a
+        href="/about"
+        className="hover:text-white transition-colors duration-300"
+      >
+        About Us
+      </a>
+      <a
+        href="/terms"
+        className="hover:text-white transition-colors duration-300"
+      >
+        Terms of Service
+      </a>
+      <a
+        href="/privacy"
+        className="hover:text-white transition-colors duration-300"
+      >
+        Privacy Policy
+      </a>
+    </div>
+  </div>
+</footer>
     </div>
   );
 }
