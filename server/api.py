@@ -1,12 +1,14 @@
+from fastapi import FastAPI, Body # type: ignore
 from typing import Union
 from mysql_manager import MysqlManager
-from fastapi import FastAPI
 from pydantic import BaseModel
 import hashlib
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 mysql = MysqlManager()
+
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -15,6 +17,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+class ImageRequest(BaseModel):
+    data: str  # Expect the `data` field as a string
 
 class SignupRequest(BaseModel):
     username: str
@@ -40,7 +46,7 @@ def sign_up(request: SignupRequest):
 @app.post("/signIn")
 def sign_in(request: SignupRequest):
     hashed_password = hashlib.md5(request.password.encode()).hexdigest()
-    sign_in_db = mysql.select_data(
+    signInDb = mysql.select_data(
         "users",
         "password",
         where_clause=f"username = '{request.username}' AND password = '{hashed_password}'"
@@ -71,3 +77,8 @@ def update_user(request: UserUpdateRequest):
         f"username = '{request.username}'"
     )
     return {"message": "User details updated successfully"}
+
+@app.post("/image")
+def image(request: ImageRequest):
+    data = request.data 
+    return {"message": "Image received successfully", "data_echo": data}
