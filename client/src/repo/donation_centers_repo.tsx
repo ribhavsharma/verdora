@@ -21,18 +21,16 @@ const DonationCentersRepo: Record<string, DonationCenter[]> = {
     ],
     eWaste: [
       {
-        name: "Tech Recycle Hub",
-        link: "https://techrecycle.example.com",
-        address: "789 Tech Park, Silicon City",
-        contact: "555-123-4567",
+        name: "Battery Doctors",
+        link: "https://www.thebatterydrs.com/",
+        address: "1972 Windsor Road Kelowna, British Columbia V1Y 4R5",
+        contact: "250.860.2866",
       },
-    ],
-    food: [
       {
-        name: "Community Food Bank",
-        link: "https://foodbank.example.com",
-        address: "321 Helping Hand Blvd, Kindness Town",
-        contact: "111-222-3333",
+        name: "Quantum Lifecycle",
+        link: "https://quantumlifecycle.com/",
+        address: "460 Doyle Avenue Kelowna, BC V1Y 2A2",
+        contact: "416.222.1773",
       },
     ],
 };
