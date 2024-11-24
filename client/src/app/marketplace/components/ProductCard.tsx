@@ -10,14 +10,19 @@ interface ProductCardProps {
 }
 
 const ProductCard: FC<ProductCardProps> = ({ product }) => {
+
+    const itemsPage  = () =>{
+        window.location.href = "/marketplace/13";
+    }
+
     return (
-        <div className="product-card">
-            {/* <Link to={`/product/${product.id}`} className="product-link"> */}
+        <div 
+        className="product-card" 
+        onClick={itemsPage}>
                 <img src={ProductImage.src} alt={product.name} />
                 <h3>{product.name}</h3>
                 <p>${product.price}</p>
-            {/* </Link>  */}
-            <button>Add to Cart</button>
+            <button onClick={itemsPage}>View Item</button>
         </div>
     );
 };

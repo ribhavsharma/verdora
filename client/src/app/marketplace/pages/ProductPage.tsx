@@ -1,7 +1,5 @@
 import React, { FC } from 'react';
 import { useParams } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 import './ProductPage.css';
 import './HomePage';
 import { Product } from './HomePage';
@@ -22,14 +20,13 @@ const ProductPage: FC = () => {
 
   return (
     <>
-      <Navbar />
       <div className="product-page">
         <img src={product.image} alt={product.name} />
         <h1>{product.name}</h1>
         <p>Price: ${product.price}</p>
-        <button>Add to Cart</button>
+        <button>View Item</button>
       </div>
-      <Footer />
+
     </>
   );
 };
