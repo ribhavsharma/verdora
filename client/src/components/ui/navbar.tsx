@@ -17,7 +17,8 @@ const Navbar = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [user, setUser] = useState<string | null>(null);
   const [notifications, setNotifications] = useState(0);
-  
+  const [notifItems, setNotifItems]= useState([]);
+
   useEffect(() => {
     const signedIn = localStorage.getItem("auth");
     const userData = localStorage.getItem("user");
@@ -34,7 +35,9 @@ const Navbar = () => {
         body: JSON.stringify({ username: userData }),
       }).then((response) => response.json())
       .then((data) => {
-        setNotifications(data);
+        setNotifications(data[0]);
+        setNotifItems(data[1]);
+        console.log(data[1]);
       })
     }
 
@@ -61,6 +64,14 @@ const Navbar = () => {
     </>
   );
 
+  const handleNotifClick = (item: any) => {
+    window.location.href = "/marketplace/" +item[0][0]
+  }
+
+  const notifClick = () => {
+    alert(1);
+  }
+
   return (
     <nav className="bg-[#226f54] shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -80,6 +91,7 @@ const Navbar = () => {
                       variant="ghost"
                       size="icon"
                       className="text-[#f4f0bb] hover:text-[#87c38f] hover:bg-[#226f54]"
+                      onClick={() => notifClick}
                     >
                       <Bell className="h-5 w-5" />
                     </Button>
@@ -92,12 +104,18 @@ const Navbar = () => {
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuItem className="cursor-pointer" onSelect={logOut}>
-                    
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/profile">Profile</Link>
-                  </DropdownMenuItem>
+                  {notifItems.map((item, index) => (
+                    <DropdownMenuItem
+                      key={index}
+                      className="cursor-pointer flex items-center space-x-3"
+                      onSelect={() => handleNotifClick(item)}
+                    >
+                      {/* Display the image */}
+                      <img src={item[0][6]} alt={item[0][1]} className="w-6 h-6 rounded-full" />
+                      {/* Display the item name */}
+                      <span>{item[0][1]}</span>
+                    </DropdownMenuItem>
+                  ))}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
