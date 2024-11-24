@@ -35,8 +35,6 @@ const Navbar = () => {
           :
           <Link href="/">Home</Link>
         }
-        <Link href="/about">About</Link>
-        <Link href="/contact">Contact</Link>
 
         {isSignedIn ?
           <span className="cursor-pointer" onClick={logOut}>Sign Out</span>
