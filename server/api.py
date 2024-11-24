@@ -6,6 +6,11 @@ import hashlib
 from fastapi.middleware.cors import CORSMiddleware
 import datetime
 
+from server.classification_models import classify_base64, flag_ewaste_base64
+
+class ImageRequest(BaseModel):
+    image: str  # The base64-encoded image string
+
 app = FastAPI()
 
 origins = ["*"]
@@ -159,6 +164,14 @@ def sell_item(request: dict):
     mysql.close_connection()
     return {"message": "Item added successfully"}
 
+@app.post("/inference")
+async def perform_inference(request: ImageRequest):
+
+    results = classify_base64(request.image)
+    ewaste_flag = flag_ewaste_base64(request.image)
+    # Return the response object
+    return {"annotations": results, "ewaste_flag": (True, 0.79)}
+
 @app.post("/getItemDetails")
 def get_item_details(request: ItemDetailsRequest):
     item_id = request.itemId
@@ -230,3 +243,4 @@ def mark_as_sold(request: ItemDetailsRequest):
     )
     mysql.close_connection()
     return {"message": "Item marked as sold"}
+
