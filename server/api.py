@@ -170,7 +170,7 @@ def get_item_details(request: ItemDetailsRequest):
      # Fetch item details
     item_details = mysql.select_data(
         "items_for_sale",
-        "category, price, user_name",
+        "category, price, user_name, image",
         where_clause=f"id = {item_id}"
     )
 
@@ -182,6 +182,7 @@ def get_item_details(request: ItemDetailsRequest):
     category = item_detail[0]
     price = item_detail[1]
     user_name = item_detail[2]
+    image = item_detail[3]
 
     # Fetch user details
     user_details = mysql.select_data(
@@ -197,12 +198,14 @@ def get_item_details(request: ItemDetailsRequest):
     user_detail = user_details[0]
     email = user_detail[0]
     phone_number = user_detail[1]
+    
 
     mysql.close_connection()
 
     return {
         "category": category,
         "price": str(price),
+        "image": image, 
         "seller_contact": {
             "username": user_name,
             "email": email,

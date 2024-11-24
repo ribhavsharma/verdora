@@ -71,34 +71,37 @@ const Page = ({ params }: { params: { itemId: string } }) => {
         </CardHeader>
         <CardContent>
           {itemDetails ? (
-            <div className="space-y-4">
-              <div>
-                <p className="text-gray-600">
-                  <strong>Item ID:</strong> {itemId}
-                </p>
-              </div>
-              <Separator />
-              <div>
-                <p className="text-gray-600">
-                  <strong>Category:</strong> {itemDetails.category}
-                </p>
-                <p className="text-gray-600">
-                  <strong>Price:</strong> ${itemDetails.price}
-                </p>
-              </div>
-              <Separator />
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800">Seller Contact</h3>
-                <p className="text-gray-600">
-                  <strong>Email:</strong> {itemDetails.seller_contact.email}
-                </p>
-                <p className="text-gray-600">
-                  <strong>Phone:</strong> {itemDetails.seller_contact.phone_number}
-                </p>
-              </div>
-            </div>
+        <div className="space-y-4">
+          <div>
+            <img src={itemDetails.image} alt="Item Image" className="w-full h-auto rounded-lg" />
+          </div>
+          <div>
+            <p className="text-gray-600">
+          <strong>Item ID:</strong> {itemId}
+            </p>
+          </div>
+          <Separator />
+          <div>
+            <p className="text-gray-600">
+          <strong>Category:</strong> {itemDetails.category}
+            </p>
+            <p className="text-gray-600">
+          <strong>Price:</strong> ${itemDetails.price}
+            </p>
+          </div>
+          <Separator />
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800">Seller Contact</h3>
+            <p className="text-gray-600">
+          <strong>Email:</strong> {itemDetails.seller_contact.email}
+            </p>
+            <p className="text-gray-600">
+          <strong>Phone:</strong> {itemDetails.seller_contact.phone_number}
+            </p>
+          </div>
+        </div>
           ) : (
-            <p className="text-gray-600">Loading item details...</p>
+        <p className="text-gray-600">Loading item details...</p>
           )}
         </CardContent>
         <CardFooter>
