@@ -16,14 +16,29 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 const Navbar = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [user, setUser] = useState<string | null>(null);
-
+  const [notifications, setNotifications] = useState(0);
+  
   useEffect(() => {
     const signedIn = localStorage.getItem("auth");
     const userData = localStorage.getItem("user");
     if (signedIn && userData) { 
       setIsSignedIn(true);
       setUser(userData);
+
+      // get notifications
+      fetch("http://127.0.0.1:8000/getNotifications", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: userData }),
+      }).then((response) => response.json())
+      .then((data) => {
+        setNotifications(data);
+      })
     }
+
+
   }, []);
 
   const logOut = () => {
@@ -57,9 +72,36 @@ const Navbar = () => {
           </div>
           <div className="hidden md:flex items-center space-x-4">
             <NavLinks />
-            <Button variant="ghost" size="icon" className="text-[#f4f0bb] hover:text-[#87c38f] hover:bg-[#226f54]">
-              <Bell className="h-5 w-5" />
-            </Button>
+            <div className="relative">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-[#f4f0bb] hover:text-[#87c38f] hover:bg-[#226f54]"
+                    >
+                      <Bell className="h-5 w-5" />
+                    </Button>
+                    
+                    {notifications > 0 && (
+                      <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+                        {notifications}
+                      </span>
+                    )}
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuItem className="cursor-pointer" onSelect={logOut}>
+                    Log out
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">Profile</Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
             {isSignedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

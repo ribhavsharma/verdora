@@ -87,7 +87,7 @@ def get_user_details(request: UserDetailsRequest):
         where_clause=f"userId = '{user_detail[0]}'"
     )
     wishlist = [i[0] for i in wishlist]
-    print(user_detail)
+
     mysql.close_connection()
     return {
         "name": user_detail[1],
@@ -173,3 +173,16 @@ def sell_item(request: dict):
 
     mysql.close_connection()
     return {"message": "Item added successfully"}
+
+@app.post("/getNotifications")
+def get_notif(request: dict):
+
+    mysql = MysqlManager()
+    userId = mysql.get_user_id(request["username"])[0][0]
+    notif = mysql.select_data("notifications",
+                              where_clause=f"userId = '{userId}'")
+
+    count_unseen = sum(1 for item in notif if item[-1] == 0)
+
+    mysql.close_connection()
+    return count_unseen
