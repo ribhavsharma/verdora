@@ -27,6 +27,9 @@ SET time_zone = "+00:00";
 -- Table structure for table `items_for_sale`
 --
 
+DROP TABLE IF EXISTS `items_for_sale`;
+DROP TABLE IF EXISTS `users`;
+
 CREATE TABLE `items_for_sale` (
   `id` int(11) NOT NULL,
   `category` text NOT NULL,
@@ -44,7 +47,9 @@ CREATE TABLE `items_for_sale` (
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(30) NOT NULL,
-  `password` varchar(250) NOT NULL
+  `password` varchar(250) NOT NULL, 
+  `email` varchar(100) NOT NULL DEFAULT '',
+  `phone_number` varchar(15) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
