@@ -165,5 +165,5 @@ async def perform_inference(request: ImageRequest):
 
     results = classify_base64(request.image)
     ewaste_flag = flag_ewaste_base64(request.image)
-    # Return the response object
-    return {"annotations": results, "ewaste_flag": (True, 0.79)}
+
+    return {"annotations": results, "ewaste_flag": ewaste_flag}
