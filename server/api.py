@@ -6,6 +6,11 @@ import hashlib
 from fastapi.middleware.cors import CORSMiddleware
 import datetime
 
+from server.classification_models import classify_base64, flag_ewaste_base64
+
+class ImageRequest(BaseModel):
+    image: str  # The base64-encoded image string
+
 app = FastAPI()
 
 origins = ["*"]
@@ -34,6 +39,9 @@ class UserUpdateRequest(BaseModel):
     email: str
     phone_number: str
     wishlist: List[str]
+    
+class ItemDetailsRequest(BaseModel):
+    itemId: int
 
 @app.post("/signUp")
 def sign_up(request: SignupRequest):
@@ -150,6 +158,7 @@ def sell_item(request: dict):
         {
             "category": request["item_name"],
             "user_name": request["username"],
+            "image": request["image"],
         }
     )
 
@@ -174,6 +183,7 @@ def sell_item(request: dict):
     mysql.close_connection()
     return {"message": "Item added successfully"}
 
+
 @app.post("/getNotifications")
 def get_notif(request: dict):
 
@@ -194,3 +204,83 @@ def get_notif(request: dict):
 
     mysql.close_connection()
     return [len(unseen_items), items]
+
+@app.post("/inference")
+async def perform_inference(request: ImageRequest):
+
+    results = classify_base64(request.image)
+    ewaste_flag = flag_ewaste_base64(request.image)
+    # Return the response object
+    return {"annotations": results, "ewaste_flag": (True, 0.79)}
+
+@app.post("/getItemDetails")
+def get_item_details(request: ItemDetailsRequest):
+    item_id = request.itemId
+    if not item_id:
+        return {"message": "Item ID is required"}
+    
+    mysql = MysqlManager()
+    
+     # Fetch item details
+    item_details = mysql.select_data(
+        "items_for_sale",
+        "category, price, user_name, image",
+        where_clause=f"id = {item_id}"
+    )
+
+    if not item_details:
+        mysql.close_connection()
+        return {"message": "Item not found"}
+
+    item_detail = item_details[0]
+    category = item_detail[0]
+    price = item_detail[1]
+    user_name = item_detail[2]
+    image = item_detail[3]
+
+    # Fetch user details
+    user_details = mysql.select_data(
+        "users",
+        "email, phone_number",
+        where_clause=f"username = '{user_name}'"
+    )
+
+    if not user_details:
+        mysql.close_connection()
+        return {"message": "User details not found for this item"}
+
+    user_detail = user_details[0]
+    email = user_detail[0]
+    phone_number = user_detail[1]
+    
+
+    mysql.close_connection()
+
+    return {
+        "category": category,
+        "price": str(price),
+        "image": image, 
+        "seller_contact": {
+            "username": user_name,
+            "email": email,
+            "phone_number": phone_number,
+        },
+    }
+
+@app.get("/getAllItems")
+def get_all_item_details():
+    mysql = MysqlManager()
+    items = mysql.select_data("items_for_sale", "id, category, price, image", where_clause="sold = 0")
+    mysql.close_connection()
+    return [{"id": item[0], "name": item[1], "price": str(item[2]), "image": item[3]} for item in items]
+
+@app.post("/markAsSold")
+def mark_as_sold(request: ItemDetailsRequest):
+    mysql = MysqlManager()
+    mysql.update_data(
+        "items_for_sale",
+        {"sold": 1},
+        where_clause=f"id = {request.itemId}"
+    )
+    mysql.close_connection()
+    return {"message": "Item marked as sold"}

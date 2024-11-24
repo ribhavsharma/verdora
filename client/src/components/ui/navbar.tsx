@@ -76,11 +76,9 @@ const Navbar = () => {
     <nav className="bg-[#226f54] shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <div className="flex-shrink-0">
-            <Link href="/" className="text-2xl font-bold text-[#f4f0bb] hover:text-[#87c38f] transition-colors">
-              verdora
-            </Link>
-          </div>
+            <div className="flex items-center flex-shrink-0">
+              <img src="/verdora_logo_2.png" alt="Verdora Logo" className="h-16 w-auto" />
+            </div>
           <div className="hidden md:flex items-center space-x-4">
             <NavLinks />
             <div className="relative">
@@ -178,7 +176,7 @@ const Navbar = () => {
       </div>
     </nav>
   );
-};
+}
 
 export default Navbar;
 
