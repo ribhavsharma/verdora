@@ -8,7 +8,8 @@ class MysqlManager:
             user="root",
             password="ribhav",
             database="verdora",
-            port="3306"
+            port="3306",
+            ssl_disabled=True
         )
 
         self.cursor = self.conn.cursor()
