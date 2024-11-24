@@ -12,11 +12,74 @@ export function AuthForm() {
   const [password, setPassword] = useState('')
   const [page, setPage] = useState(0)  // 0 for login 1 for sign up
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Here you would typically handle the authentication logic
-    console.log('Login attempted with:', { username, password })
-  }
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent form submission from refreshing the page
+  
+    if (page == 0) {
+      // Sign in
+      try {
+        const response = await fetch("http://127.0.0.1:8000/signIn", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+          if (data == 1) {
+            // Store the auth state and username in localStorage
+            localStorage.setItem("auth", "1");
+            localStorage.setItem("user", username);
+  
+            window.location.href = "/classify"; // Redirect to the classify page
+          } else {
+            alert("Wrong username or password provided");
+          }
+        } else {
+          const errorData = await response.json();
+          alert(errorData.detail || "Error signing in");
+        }
+      } catch (error) {
+        alert("Failed to connect to the server");
+      }
+    } else {
+      if (username.length < 3) {
+        alert("Username should be at least 3 characters long");
+        return;
+      } else if (password.length < 5) {
+        alert("Password should be at least 5 characters long");
+        return;
+      }
+  
+      // Sign up
+      try {
+        const response = await fetch("http://127.0.0.1:8000/signUp", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+        });
+  
+        if (response.ok) {
+          // Store the auth state and username in localStorage
+          localStorage.setItem("auth", "1");
+          localStorage.setItem("user", username);
+  
+          window.location.href = "/classify"; // Redirect to the classify page
+        } else {
+          const errorData = await response.json();
+          alert(errorData.detail || "Error signing up");
+        }
+      } catch (error) {
+        alert("Failed to connect to the server");
+      }
+    }
+  };
+  
 
   useEffect(() => {
     const hash = window.location.hash; // Get the hash
