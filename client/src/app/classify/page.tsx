@@ -5,12 +5,14 @@ import { Camera, X, Upload, Loader2, PackagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Toaster } from "@/components/ui/toaster"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { toast } from "@/hooks/use-toast";
 
 interface Result {
   image: string;
@@ -120,38 +122,46 @@ export default function CameraApp() {
   const handleSell = async (index: number) => {
     const result = results[index];
     const itemName = result.className.toLowerCase();
-    alert(`Selling ${result.className}`);
+    const image = result.image; // Get the image URL
+    
 
     const username = localStorage.getItem("user"); // Get the user ID (username) from localStorage
 
     if (!username) {
-      alert("User not logged in.");
-      return;
+        alert("User not logged in.");
+        return;
     }
-    try {
-      const response = await fetch("http://127.0.0.1:8000/sellItem", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          item_name: itemName,
-          username: username,
-        }),
-      });
 
-      if (response.ok) {
-        const data = await response.json();
-        alert(data.message || "Item added successfully!");
-      } else {
-        const errorData = await response.json();
-        alert(errorData.detail || "Failed to sell the item.");
-      }
+    try {
+        const response = await fetch("http://127.0.0.1:8000/sellItem", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                item_name: itemName,
+                username: username,
+                image: image, // Include the image in the payload
+            }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            toast({
+              title: "Success!",
+              description: "Item added to marketplace.",
+            })
+
+        } else {
+            const errorData = await response.json();
+            alert(errorData.detail || "Failed to sell the item.");
+        }
     } catch (error) {
-      console.error("Error selling item:", error);
-      alert("Failed to connect to the server.");
+        console.error("Error selling item:", error);
+        alert("Failed to connect to the server.");
     }
-  };
+};
+
 
   return (
     <div className="min-h-screen bg-[#BACBB3] p-4 md:p-8">
