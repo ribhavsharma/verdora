@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { toast } from "@/hooks/use-toast";
 
 const Page = ({ params }: { params: { itemId: string } }) => {
   const { itemId } = useParams();
@@ -39,14 +40,24 @@ const Page = ({ params }: { params: { itemId: string } }) => {
 
   const handleMarkAsSold = async () => {
     try {
-      await fetch(`http://127.0.0.1:8000/markAsSold`, {
+      const response = await fetch(`http://127.0.0.1:8000/markAsSold`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ itemId }),
       });
-      alert("Item marked as sold");
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "Item has been marked as sold.",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to mark item as sold.",
+        });
+      }
     } catch (error) {
       console.error("Error marking item as sold:", error);
     }

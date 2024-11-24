@@ -6,9 +6,9 @@ class MysqlManager:
         self.conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="",
+            password="ribhav",
             database="verdora",
-            port="3310",
+            port="3306",
             ssl_disabled=True
         )
 

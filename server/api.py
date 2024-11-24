@@ -151,6 +151,7 @@ def sell_item(request: dict):
         {
             "category": request["item_name"],
             "user_name": request["username"],
+            "image": request["image"],
         }
     )
         
@@ -207,3 +208,21 @@ def get_item_details(request: ItemDetailsRequest):
             "phone_number": phone_number,
         },
     }
+
+@app.get("/getAllItems")
+def get_all_item_details():
+    mysql = MysqlManager()
+    items = mysql.select_data("items_for_sale", "id, category, price, image", where_clause="sold = 0")
+    mysql.close_connection()
+    return [{"id": item[0], "name": item[1], "price": str(item[2]), "image": item[3]} for item in items]
+
+@app.post("/markAsSold")
+def mark_as_sold(request: ItemDetailsRequest):
+    mysql = MysqlManager()
+    mysql.update_data(
+        "items_for_sale",
+        {"sold": 1},
+        where_clause=f"id = {request.itemId}"
+    )
+    mysql.close_connection()
+    return {"message": "Item marked as sold"}
