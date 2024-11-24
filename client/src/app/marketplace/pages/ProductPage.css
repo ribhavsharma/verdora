@@ -1,0 +1,26 @@
+.product-page {
+    max-width: 800px;
+    margin: auto;
+    text-align: center;
+    padding: 1rem;
+}
+
+.product-page img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.product-page button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #f4f0bb;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.product-page button:hover {
+    background-color:#226f54;
+}
