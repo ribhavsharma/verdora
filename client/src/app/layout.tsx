@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { BrowserRouter } from "react-router-dom";
 import "./globals.css";
 import Navbar from "@/components/ui/navbar";
 

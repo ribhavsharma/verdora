@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from 'next/link'
 
@@ -15,7 +14,9 @@ export function AuthForm() {
 
   
   const handleSubmit = async (e: React.FormEvent) => {
-    if(page==0){
+    e.preventDefault(); // Prevent form submission from refreshing the page
+  
+    if (page == 0) {
       // Sign in
       try {
         const response = await fetch("http://127.0.0.1:8000/signIn", {
@@ -28,11 +29,14 @@ export function AuthForm() {
   
         if (response.ok) {
           const data = await response.json();
-          if(data==1){          
-            window.location.href= "/classify"
-            localStorage.setItem("auth", "1")
-          }else{
-            alert("Wrong username or password provided")
+          if (data == 1) {
+            // Store the auth state and username in localStorage
+            localStorage.setItem("auth", "1");
+            localStorage.setItem("user", username);
+  
+            window.location.href = "/classify"; // Redirect to the classify page
+          } else {
+            alert("Wrong username or password provided");
           }
         } else {
           const errorData = await response.json();
@@ -42,14 +46,15 @@ export function AuthForm() {
         alert("Failed to connect to the server");
       }
     } else {
-      if(username.length<3){
-        alert("Username should be at least 3 characters long")
+      if (username.length < 3) {
+        alert("Username should be at least 3 characters long");
         return;
-      }else if(password.length<5){
-        alert("Username should be at least 5 characters long")
+      } else if (password.length < 5) {
+        alert("Password should be at least 5 characters long");
         return;
       }
-      // Sign Up
+  
+      // Sign up
       try {
         const response = await fetch("http://127.0.0.1:8000/signUp", {
           method: "POST",
@@ -60,8 +65,11 @@ export function AuthForm() {
         });
   
         if (response.ok) {
-          window.location.href= "/classify"
-          localStorage.setItem("auth", "1")
+          // Store the auth state and username in localStorage
+          localStorage.setItem("auth", "1");
+          localStorage.setItem("user", username);
+  
+          window.location.href = "/classify"; // Redirect to the classify page
         } else {
           const errorData = await response.json();
           alert(errorData.detail || "Error signing up");
@@ -70,7 +78,8 @@ export function AuthForm() {
         alert("Failed to connect to the server");
       }
     }
-  }
+  };
+  
 
   useEffect(() => {
     const hash = window.location.hash; // Get the hash

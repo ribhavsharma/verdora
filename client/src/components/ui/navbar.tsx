@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useSSR } from 'react-i18next';
 import { FaBell } from 'react-icons/fa'; // Install react-icons if not already installed
 
 const Navbar = () => {
@@ -16,8 +15,8 @@ const Navbar = () => {
     }, []);
 
     const logOut  = () =>{
-
       localStorage.removeItem("auth");
+      localStorage.removeItem("user");
       window.location.href = "/auth";
     }
 
