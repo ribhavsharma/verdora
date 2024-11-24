@@ -66,6 +66,7 @@ def get_user_details(request: UserDetailsRequest):
         "users",
         where_clause=f"username = '{request.username}'"
     )
+    
     if not user_details:
         return {"message": "User not found"}
     user_detail = user_details[0]
@@ -144,13 +145,31 @@ def image(request: ImageRequest):
 def sell_item(request: dict):
 
     mysql = MysqlManager()
-    mysql.insert_data(
+    itemId = mysql.insert_data(
         "items_for_sale",
         {
             "category": request["item_name"],
             "user_name": request["username"],
         }
     )
-        
+
+    userId = mysql.get_user_id(request["username"])[0][0]
+    item = request["item_name"]
+    # check users who want this item
+    usersWhoHaveItemInWishlist = mysql.select_data(
+        "wishlist",
+        where_clause=f"userId != '{userId}' AND item='{item}'"
+    )
+
+    for user in usersWhoHaveItemInWishlist:
+        buyerId = user[1]
+        mysql.insert_data(
+            "notifications",
+            {
+                "userId": buyerId,
+                "itemId": itemId,
+            }
+        )
+
     mysql.close_connection()
     return {"message": "Item added successfully"}
