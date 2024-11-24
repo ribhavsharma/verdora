@@ -4,6 +4,7 @@ from mysql_manager import MysqlManager
 from pydantic import BaseModel
 import hashlib
 from fastapi.middleware.cors import CORSMiddleware
+import datetime
 
 app = FastAPI()
 mysql = MysqlManager()
@@ -51,7 +52,7 @@ def sign_in(request: SignupRequest):
         "password",
         where_clause=f"username = '{request.username}' AND password = '{hashed_password}'"
     )
-    return {"message": "Sign in successful" if sign_in_db else "Invalid credentials"}
+    return {1 if signInDb else 0}
 
 @app.post("/userDetails")
 def get_user_details(request: UserDetailsRequest):
@@ -82,3 +83,16 @@ def update_user(request: UserUpdateRequest):
 def image(request: ImageRequest):
     data = request.data 
     return {"message": "Image received successfully", "data_echo": data}
+
+@app.post("/sellItem")
+def sell_item(request: dict):
+    mysql.insert_data(
+        "items_for_sale",
+        {
+            "category": request["item_name"],
+            "user_name": request["username"],
+        }
+    )
+        
+    
+    return {"message": "Item added successfully"}
