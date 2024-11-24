@@ -88,12 +88,13 @@ def get_user_details(request: UserDetailsRequest):
         "item",
         where_clause=f"userId = '{user_detail[0]}'"
     )
-    
+    wishlist = [i[0] for i in wishlist]
+    print(user_detail)
     mysql.close_connection()
     return {
         "name": user_detail[1],
-        "email": user_detail[2],
-        "phone_number": user_detail[3],
+        "email": user_detail[3],
+        "phone_number": user_detail[4],
         "listings": listings,
         "wishlist": wishlist
     }
