@@ -192,6 +192,5 @@ def get_notif(request: dict):
         )
         items.append(item_details)
 
-    print(items)
     mysql.close_connection()
-    return len(unseen_items)
+    return [len(unseen_items), items]
