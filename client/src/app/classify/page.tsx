@@ -1,6 +1,15 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import { Camera, X, Upload, Loader2 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+interface Result {
+  image: string;
+  className: string;
+}
 
 export default function CameraApp() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -8,33 +17,43 @@ export default function CameraApp() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [results, setResults] = useState<Result[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const userAgent = navigator.userAgent;
     setIsMobile(/android|iphone|ipad|ipod/i.test(userAgent));
 
-
-    /// check if users signedIn
     const signedIn = localStorage.getItem("auth");
-    if(!signedIn){
-      window.location.href ="/auth"
+    if (!signedIn) {
+      window.location.href = "/auth";
     }
   }, []);
 
-  const startCamera = async () => {
+  useEffect(() => {
+    if (isCameraActive && !isMobile) {
+      const setupCamera = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+            videoRef.current.play();
+          }
+        } catch (err) {
+          console.error("Error accessing camera:", err);
+          alert("Unable to access camera. Please check permissions.");
+        }
+      };
+      setupCamera();
+    }
+  }, [isCameraActive, isMobile]);
+
+  const startCamera = () => {
     if (isMobile) {
       fileInputRef.current?.click();
     } else {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          videoRef.current.play();
-        }
-      } catch (err) {
-        console.error("Error accessing camera:", err);
-        alert("Unable to access camera. Please check permissions.");
-      }
+      setIsCameraActive(true);
     }
   };
 
@@ -45,6 +64,7 @@ export default function CameraApp() {
 
       tracks.forEach((track) => track.stop());
       videoRef.current.srcObject = null;
+      setIsCameraActive(false);
     }
   };
 
@@ -60,6 +80,8 @@ export default function CameraApp() {
 
         const imageURL = canvas.toDataURL("image/png");
         setPhoto(imageURL);
+        stopCamera();
+        handleApiCall(imageURL);
       }
     }
   };
@@ -69,73 +91,149 @@ export default function CameraApp() {
     if (files && files.length > 0) {
       const imageURL = URL.createObjectURL(files[0]);
       setPhoto(imageURL);
+      handleApiCall(imageURL);
     }
-    // TODO: Send the image to the server for classification
+  };
+
+  const handleApiCall = async (imageUrl: string) => {
+    setIsLoading(true);
+
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    const mockResults = [
+      { image: imageUrl, className: "Recyclable Item" },
+      { image: imageUrl, className: "Compostable Item" },
+      { image: imageUrl, className: "General Waste" },
+    ];
+
+    setResults(mockResults);
+    setIsLoading(false);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#f4f0bb] p-5">
-      <h1 className="text-4xl font-bold mb-6 text-[#226f54]">verdora</h1>
-      <div className="flex flex-col items-center justify-center w-full max-w-lg">
-        {!isMobile && (
-          <div className="relative w-full h-72 bg-[#43291f] rounded-lg overflow-hidden mb-6">
-            <video
-              ref={videoRef}
-              className="absolute top-0 left-0 w-full h-full object-cover"
-            />
+    <div className="min-h-screen bg-[#BACBB3] p-4 md:p-8">
+      <Card className="max-w-5xl mx-auto bg-white shadow-xl rounded-xl overflow-hidden">
+        <CardContent className="p-6 md:p-8">
+          <h1 className="text-3xl font-bold text-center text-[#226F54] mb-8">verdora</h1>
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <Tabs defaultValue="camera" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="camera">Camera</TabsTrigger>
+                  <TabsTrigger value="upload">Upload</TabsTrigger>
+                </TabsList>
+                <TabsContent value="camera">
+                  <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden relative">
+                    <video
+                      ref={videoRef}
+                      className={`absolute inset-0 w-full h-full object-cover ${isCameraActive ? '' : 'hidden'}`}
+                    />
+                    {!isCameraActive && (
+                      <div className="flex items-center justify-center h-full">
+                        <Camera className="w-16 h-16 text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="mt-4 flex justify-center">
+                    <Button
+                      onClick={isCameraActive ? capturePhoto : startCamera}
+                      className="bg-[#226F54] text-white hover:bg-[#87C38F] transition-all"
+                      size="lg"
+                    >
+                      {isCameraActive ? (
+                        <>
+                          <Camera className="mr-2 h-5 w-5" />
+                          Capture Photo
+                        </>
+                      ) : (
+                        <>
+                          <Camera className="mr-2 h-5 w-5" />
+                          Start Camera
+                        </>
+                      )}
+                    </Button>
+                    {isCameraActive && (
+                      <Button
+                        onClick={stopCamera}
+                        className="ml-4 bg-[#43291F] text-white hover:bg-[#87C38F] transition-all"
+                        size="lg"
+                      >
+                        <X className="mr-2 h-5 w-5" />
+                        Stop Camera
+                      </Button>
+                    )}
+                  </div>
+                </TabsContent>
+                <TabsContent value="upload">
+                  <div
+                    className="aspect-video bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center cursor-pointer"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <div className="text-center">
+                      <Upload className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-500">Click to upload an image</p>
+                    </div>
+                  </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                </TabsContent>
+              </Tabs>
+
+              {photo && (
+                <div className="space-y-4">
+                  <h2 className="text-xl font-semibold text-[#226F54]">Captured Photo</h2>
+                  <div className="aspect-video w-full relative rounded-lg overflow-hidden">
+                    <img
+                      src={photo}
+                      alt="Captured"
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-6">
+              <h2 className="text-2xl font-semibold text-[#226F54]">Results</h2>
+              {isLoading ? (
+                <div className="flex items-center justify-center h-64">
+                  <Loader2 className="w-8 h-8 text-[#226F54] animate-spin" />
+                </div>
+              ) : results.length > 0 ? (
+                <div className="space-y-4">
+                  {results.map((result, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-4 bg-gray-50 p-4 rounded-lg"
+                    >
+                      <div className="w-16 h-16 shrink-0">
+                        <img
+                          src={result.image}
+                          alt={result.className}
+                          className="w-full h-full object-cover rounded-md"
+                        />
+                      </div>
+                      <div>
+                        <p className="text-[#43291F] font-medium">{result.className}</p>
+                        <p className="text-sm text-gray-500">Confidence: 95%</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-center">No results yet. Capture or upload an image to get started.</p>
+              )}
+            </div>
           </div>
-        )}
+        </CardContent>
+      </Card>
 
-        <div className="flex space-x-4 mb-6">
-          <button
-            onClick={startCamera}
-            className="bg-[#226f54] text-[#f4f0bb] px-4 py-2 rounded-lg shadow-md hover:bg-[#87c38f] hover:text-[#43291f] transition-all"
-          >
-            {isMobile ? "Open Camera" : "Start Camera"}
-          </button>
-          {!isMobile && (
-            <button
-              onClick={capturePhoto}
-              className="bg-[#87c38f] text-[#43291f] px-4 py-2 rounded-lg shadow-md hover:bg-[#226f54] hover:text-[#f4f0bb] transition-all"
-            >
-              Capture Photo
-            </button>
-          )}
-          <button
-            onClick={stopCamera}
-            className="bg-[#43291f] text-[#f4f0bb] px-4 py-2 rounded-lg shadow-md hover:bg-[#87c38f] hover:text-[#43291f] transition-all"
-          >
-            Stop Camera
-          </button>
-        </div>
-
-        {photo && (
-          <div className="text-center">
-            <h2 className="text-2xl font-semibold mb-4 text-[#226f54]">
-              Captured Photo
-            </h2>
-            <img
-              src={photo}
-              alt="Captured"
-              className="w-full max-w-[400px] border-2 border-[#87c38f] rounded-lg mx-auto"
-            />
-          </div>
-        )}
-      </div>
-
-      {isMobile && (
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
-          onChange={handleFileChange}
-          className="hidden"
-        />
-      )}
-
-      {!isMobile && <canvas ref={canvasRef} style={{ display: "none" }} />}
+      <canvas ref={canvasRef} style={{ display: "none" }} />
     </div>
   );
 }
-
