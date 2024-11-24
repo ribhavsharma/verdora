@@ -31,11 +31,12 @@ DROP TABLE IF EXISTS `items_for_sale`;
 DROP TABLE IF EXISTS `users`;
 
 CREATE TABLE `items_for_sale` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `category` text NOT NULL,
-  `userId` int(11) NOT NULL,
+  `user_name` text NOT NULL,
   `date` datetime NOT NULL DEFAULT current_timestamp(),
-  `sold` tinyint(1) NOT NULL
+  `sold` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

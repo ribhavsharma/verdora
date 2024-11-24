@@ -1,10 +1,16 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { Camera, X, Upload, Loader2 } from 'lucide-react';
+import { Camera, X, Upload, Loader2, PackagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Result {
   image: string;
@@ -35,7 +41,9 @@ export default function CameraApp() {
     if (isCameraActive && !isMobile) {
       const setupCamera = async () => {
         try {
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+          });
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
             videoRef.current.play();
@@ -109,12 +117,50 @@ export default function CameraApp() {
     setIsLoading(false);
   };
 
+  const handleSell = async (index: number) => {
+    const result = results[index];
+    const itemName = result.className.toLowerCase();
+    alert(`Selling ${result.className}`);
+
+    const username = localStorage.getItem("user"); // Get the user ID (username) from localStorage
+
+    if (!username) {
+      alert("User not logged in.");
+      return;
+    }
+    try {
+      const response = await fetch("http://127.0.0.1:8000/sellItem", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          item_name: itemName,
+          username: username,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert(data.message || "Item added successfully!");
+      } else {
+        const errorData = await response.json();
+        alert(errorData.detail || "Failed to sell the item.");
+      }
+    } catch (error) {
+      console.error("Error selling item:", error);
+      alert("Failed to connect to the server.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#BACBB3] p-4 md:p-8">
       <Card className="max-w-5xl mx-auto bg-white shadow-xl rounded-xl overflow-hidden">
         <CardContent className="p-6 md:p-8">
-          <h1 className="text-3xl font-bold text-center text-[#226F54] mb-8">verdora</h1>
-          
+          <h1 className="text-3xl font-bold text-center text-[#226F54] mb-8">
+            verdora
+          </h1>
+
           <div className="grid md:grid-cols-2 gap-8">
             <div className="space-y-6">
               <Tabs defaultValue="camera" className="w-full">
@@ -126,7 +172,9 @@ export default function CameraApp() {
                   <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden relative">
                     <video
                       ref={videoRef}
-                      className={`absolute inset-0 w-full h-full object-cover ${isCameraActive ? '' : 'hidden'}`}
+                      className={`absolute inset-0 w-full h-full object-cover ${
+                        isCameraActive ? "" : "hidden"
+                      }`}
                     />
                     {!isCameraActive && (
                       <div className="flex items-center justify-center h-full">
@@ -186,7 +234,9 @@ export default function CameraApp() {
 
               {photo && (
                 <div className="space-y-4">
-                  <h2 className="text-xl font-semibold text-[#226F54]">Captured Photo</h2>
+                  <h2 className="text-xl font-semibold text-[#226F54]">
+                    Captured Photo
+                  </h2>
                   <div className="aspect-video w-full relative rounded-lg overflow-hidden">
                     <img
                       src={photo}
@@ -218,15 +268,58 @@ export default function CameraApp() {
                           className="w-full h-full object-cover rounded-md"
                         />
                       </div>
-                      <div>
-                        <p className="text-[#43291F] font-medium">{result.className}</p>
+                      <div className="flex-1">
+                        <p className="text-[#43291F] font-medium">
+                          {result.className}
+                        </p>
                         <p className="text-sm text-gray-500">Confidence: 95%</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {/* Sell Button with Tooltip */}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="text-[#226F54] hover:bg-[#87C38F]"
+                                onClick={() => handleSell(index)}
+                              >
+                                <PackagePlus className="h-5 w-5" />{" "}
+                                {/* Replace with "sell" icon */}
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Sell this item</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        {/* Delete Button with Tooltip */}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="text-[#43291F] hover:bg-red-200"
+                                // onClick={() => handleDelete(index)}
+                              >
+                                <X className="h-5 w-5" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent className="bg-red-400">
+                              <p>Delete this item</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 text-center">No results yet. Capture or upload an image to get started.</p>
+                <p className="text-gray-500 text-center">
+                  No results yet. Capture or upload an image to get started.
+                </p>
               )}
             </div>
           </div>
