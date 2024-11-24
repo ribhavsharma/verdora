@@ -74,6 +74,7 @@ def get_user_details(request: UserDetailsRequest):
         "users",
         where_clause=f"username = '{request.username}'"
     )
+    
     if not user_details:
         return {"message": "User not found"}
     user_detail = user_details[0]
@@ -94,7 +95,7 @@ def get_user_details(request: UserDetailsRequest):
         where_clause=f"userId = '{user_detail[0]}'"
     )
     wishlist = [i[0] for i in wishlist]
-    print(user_detail)
+
     mysql.close_connection()
     return {
         "name": user_detail[1],
@@ -152,7 +153,7 @@ def image(request: ImageRequest):
 def sell_item(request: dict):
 
     mysql = MysqlManager()
-    mysql.insert_data(
+    itemId = mysql.insert_data(
         "items_for_sale",
         {
             "category": request["item_name"],
@@ -160,9 +161,49 @@ def sell_item(request: dict):
             "image": request["image"],
         }
     )
-        
+
+    userId = mysql.get_user_id(request["username"])[0][0]
+    item = request["item_name"]
+    # check users who want this item
+    usersWhoHaveItemInWishlist = mysql.select_data(
+        "wishlist",
+        where_clause=f"userId != '{userId}' AND item='{item}'"
+    )
+
+    for user in usersWhoHaveItemInWishlist:
+        buyerId = user[1]
+        mysql.insert_data(
+            "notifications",
+            {
+                "userId": buyerId,
+                "itemId": itemId,
+            }
+        )
+
     mysql.close_connection()
     return {"message": "Item added successfully"}
+
+
+@app.post("/getNotifications")
+def get_notif(request: dict):
+
+    mysql = MysqlManager()
+    userId = mysql.get_user_id(request["username"])[0][0]
+    notif = mysql.select_data("notifications",
+                              where_clause=f"userId = '{userId}'")
+
+    unseen_items = [item for item in notif if item[-1] == 0]
+    items = []
+    for item in notif:
+        itemId = item[2]
+        item_details = mysql.select_data(
+            "items_for_sale",
+            where_clause=f"id = '{itemId}'"
+        )
+        items.append(item_details)
+
+    mysql.close_connection()
+    return [len(unseen_items), items]
 
 @app.post("/inference")
 async def perform_inference(request: ImageRequest):
@@ -243,4 +284,3 @@ def mark_as_sold(request: ItemDetailsRequest):
     )
     mysql.close_connection()
     return {"message": "Item marked as sold"}
-

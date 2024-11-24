@@ -30,6 +30,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("user");
+
     if (storedUsername) {
       fetch("http://127.0.0.1:8000/userDetails", {
         method: "POST",
@@ -71,6 +72,19 @@ const ProfilePage = () => {
     setIsEditing(false);
     setEditedUser(user); // Reset changes
   };
+
+  const testSellItem = () => {
+    fetch("http://127.0.0.1:8000/sellItem", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        item_name: "Shoes",
+        username: editedUser?.username,
+      }),
+    })
+  }
 
   const handleSave = async () => {
     if (editedUser) {
@@ -130,6 +144,7 @@ const ProfilePage = () => {
                 {user.username}
               </CardTitle>
             </div>
+            <button onClick={testSellItem} >sakosaokokas</button>
           </CardHeader>
           <CardContent>
             <h2 className="text-xl font-semibold mb-4 text-[#226f54]">
