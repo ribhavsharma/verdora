@@ -94,6 +94,8 @@ def update_user(request: UserUpdateRequest):
 @app.post("/image")
 def image(request: ImageRequest):
     data = request.data 
+    # TODO: Send the image data to the model for processing here
+    
     return {"message": "Image received successfully", "data_echo": data}
 
 @app.post("/sellItem")

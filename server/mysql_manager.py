@@ -10,6 +10,7 @@ class MysqlManager:
             database="verdora",
             port="3306",
             ssl_disabled=True
+            
         )
 
         self.cursor = self.conn.cursor()
