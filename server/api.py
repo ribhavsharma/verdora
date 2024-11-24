@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Body # type: ignore
-from typing import Union
+from typing import List, Union
 from mysql_manager import MysqlManager
 from pydantic import BaseModel
 import hashlib
@@ -33,6 +33,7 @@ class UserUpdateRequest(BaseModel):
     username: str
     email: str
     phone_number: str
+    wishlist: List[str]
     
 class ItemDetailsRequest(BaseModel):
     itemId: int
@@ -66,7 +67,6 @@ def get_user_details(request: UserDetailsRequest):
     mysql = MysqlManager()
     user_details = mysql.select_data(
         "users",
-        "username, email, phone_number",
         where_clause=f"username = '{request.username}'"
     )
     if not user_details:
@@ -81,13 +81,21 @@ def get_user_details(request: UserDetailsRequest):
     
     # Format the listings
     listings = [{"category": listing[0]} for listing in user_listings]
+
+    # get wishlist items
+    wishlist = mysql.select_data(
+        "wishlist",
+        "item",
+        where_clause=f"userId = '{user_detail[0]}'"
+    )
+    
     mysql.close_connection()
     return {
-        "name": user_detail[0],
-        "email": user_detail[1],
-        "phone_number": user_detail[2],
-        "listings": listings
-        
+        "name": user_detail[1],
+        "email": user_detail[2],
+        "phone_number": user_detail[3],
+        "listings": listings,
+        "wishlist": wishlist
     }
     
 @app.post("/updateUser")
@@ -99,6 +107,33 @@ def update_user(request: UserUpdateRequest):
         {"email": request.email, "phone_number": request.phone_number},
         f"username = '{request.username}'"
     )
+
+    userId = mysql.get_user_id(request.username)[0][0]
+
+    wishlistItems = request.wishlist
+    # check if wishlist item already exists in users database
+    existingItems = mysql.select_data(
+            "wishlist",
+            "*",
+            where_clause=f"userId = '{userId}'"
+        )
+    
+    existingItems = [item[2] for item in existingItems]
+
+    for item in wishlistItems:
+        if item in existingItems: 
+            existingItems.remove(item)
+            continue
+
+        mysql.insert_data("wishlist",
+                          {
+                              'userId': userId,
+                              'item': item
+                          })
+
+    for leftOutItems in existingItems:
+        mysql.delete_data("wishlist", where_clause=f"userid={userId} AND item='{leftOutItems}'")
+
     mysql.close_connection()
     return {"message": "User details updated successfully"}
 
