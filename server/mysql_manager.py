@@ -25,6 +25,7 @@ class MysqlManager:
         values = tuple(data.values())
         self.cursor.execute(query, values)
         self.conn.commit()
+        return self.cursor.lastrowid 
 
     def select_data(self, table, columns="*", where_clause=None):
         query = f"SELECT {columns} FROM {table}"

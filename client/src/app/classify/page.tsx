@@ -5,7 +5,7 @@ import { Camera, X, Upload, Loader2, PackagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "@/components/ui/toaster";
 import {
   Tooltip,
   TooltipContent,
@@ -28,6 +28,12 @@ export default function CameraApp() {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [results, setResults] = useState<Result[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const donationCenters: Record<string, string> = {
+    e_waste: "Find e-waste donation centers at: https://example.com/e-waste",
+    recyclable: "Visit your nearest recycling center: https://example.com/recycle",
+    compostable: "Locate composting facilities here: https://example.com/compost",
+  };
 
   useEffect(() => {
     const userAgent = navigator.userAgent;
@@ -110,9 +116,9 @@ export default function CameraApp() {
 
     await new Promise((resolve) => setTimeout(resolve, 1500));
     const mockResults = [
-      { image: imageUrl, className: "Recyclable Item" },
-      { image: imageUrl, className: "Compostable Item" },
-      { image: imageUrl, className: "General Waste" },
+      { image: imageUrl, className: "recyclable" },
+      { image: imageUrl, className: "compostable" },
+      { image: imageUrl, className: "e_waste" },
     ];
 
     setResults(mockResults);
@@ -122,46 +128,42 @@ export default function CameraApp() {
   const handleSell = async (index: number) => {
     const result = results[index];
     const itemName = result.className.toLowerCase();
-    const image = result.image; // Get the image URL
-    
+    const image = result.image;
 
-    const username = localStorage.getItem("user"); // Get the user ID (username) from localStorage
+    const username = localStorage.getItem("user");
 
     if (!username) {
-        alert("User not logged in.");
-        return;
+      alert("User not logged in.");
+      return;
     }
 
     try {
-        const response = await fetch("http://127.0.0.1:8000/sellItem", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                item_name: itemName,
-                username: username,
-                image: image, // Include the image in the payload
-            }),
+      const response = await fetch("http://127.0.0.1:8000/sellItem", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          item_name: itemName,
+          username: username,
+          image: image,
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Success!",
+          description: "Item added to marketplace.",
         });
-
-        if (response.ok) {
-            const data = await response.json();
-            toast({
-              title: "Success!",
-              description: "Item added to marketplace.",
-            })
-
-        } else {
-            const errorData = await response.json();
-            alert(errorData.detail || "Failed to sell the item.");
-        }
+      } else {
+        const errorData = await response.json();
+        alert(errorData.detail || "Failed to sell the item.");
+      }
     } catch (error) {
-        console.error("Error selling item:", error);
-        alert("Failed to connect to the server.");
+      console.error("Error selling item:", error);
+      alert("Failed to connect to the server.");
     }
-};
-
+  };
 
   return (
     <div className="min-h-screen bg-[#BACBB3] p-4 md:p-8">
@@ -269,23 +271,30 @@ export default function CameraApp() {
                   {results.map((result, index) => (
                     <div
                       key={index}
-                      className="flex items-center gap-4 bg-gray-50 p-4 rounded-lg"
+                      className="flex flex-col gap-4 bg-gray-50 p-4 rounded-lg"
                     >
-                      <div className="w-16 h-16 shrink-0">
-                        <img
-                          src={result.image}
-                          alt={result.className}
-                          className="w-full h-full object-cover rounded-md"
-                        />
+                      <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 shrink-0">
+                          <img
+                            src={result.image}
+                            alt={result.className}
+                            className="w-full h-full object-cover rounded-md"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-[#43291F] font-medium">
+                            {result.className}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Confidence: 95%
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <p className="text-[#43291F] font-medium">
-                          {result.className}
-                        </p>
-                        <p className="text-sm text-gray-500">Confidence: 95%</p>
-                      </div>
+                      <p className="text-sm text-gray-700">
+                        {donationCenters[result.className.toLowerCase()] ||
+                          "No specific recommendation available for this type."}
+                      </p>
                       <div className="flex items-center gap-2">
-                        {/* Sell Button with Tooltip */}
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -295,30 +304,11 @@ export default function CameraApp() {
                                 className="text-[#226F54] hover:bg-[#87C38F]"
                                 onClick={() => handleSell(index)}
                               >
-                                <PackagePlus className="h-5 w-5" />{" "}
-                                {/* Replace with "sell" icon */}
+                                <PackagePlus className="h-5 w-5" />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>
                               <p>Sell this item</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                        {/* Delete Button with Tooltip */}
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                className="text-[#43291F] hover:bg-red-200"
-                                // onClick={() => handleDelete(index)}
-                              >
-                                <X className="h-5 w-5" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="bg-red-400">
-                              <p>Delete this item</p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
