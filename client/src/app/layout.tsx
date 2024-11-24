@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { BrowserRouter } from "react-router-dom";
 import "./globals.css";
 
 const geistSans = localFont({

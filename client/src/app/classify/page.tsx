@@ -12,6 +12,13 @@ export default function CameraApp() {
   useEffect(() => {
     const userAgent = navigator.userAgent;
     setIsMobile(/android|iphone|ipad|ipod/i.test(userAgent));
+
+
+    /// check if users signedIn
+    const signedIn = localStorage.getItem("auth");
+    if(!signedIn){
+      window.location.href ="/auth"
+    }
   }, []);
 
   const startCamera = async () => {
