@@ -11,6 +11,8 @@ export default function Home() {
       
       {/* Hero Section with Dot Pattern */}
       <section className="relative flex flex-col justify-center items-center min-h-screen">
+         {/* Animated Beam */}
+         <AnimatedBeamComp />
       <div
         className="absolute w-[50rem] h-[50rem] rounded-full"
         style={{
@@ -37,7 +39,7 @@ export default function Home() {
         />
 
         {/* Header Section */}
-        <div className="text-center mt-24 z-10">
+        <div className="text-center mt-12 z-10">
           <h1 className="text-5xl font-bold text-[#226f54] mb-4">
             welcome to verdora
           </h1>
@@ -54,12 +56,10 @@ export default function Home() {
           Get Started
         </RainbowButton>
 
-        {/* Animated Beam */}
-        <AnimatedBeamComp />
       </section>
 
       {/* Features Section */}
-      <section className="w-full py-16">
+      <section className="w-full py-16 px-16">
         <div className="container mx-auto text-center">
           <h2 className="text-4xl font-bold text-[#226f54] mb-10">
             Features You'll Love
