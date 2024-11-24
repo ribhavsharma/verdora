@@ -10,6 +10,7 @@ interface User {
   email: string;
   phone_number: string;
   avatar: string;
+  wishlist: Array<string>;
 }
 
 interface Item {
@@ -22,6 +23,10 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState<User | null>(null);
   const [items, setItems] = useState<Item[]>([]); // State for user item listings
+
+  const wishlistItems = [  'Accessories','Shoes','Clothes','Bags','Glassware', 'Lightbulb',  
+    'Aluminium Foil or Tray', 'Metal Can or Container',  
+    'Cardboard', 'Battery', 'Electronic Waste',];
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("user");
@@ -41,6 +46,7 @@ const ProfilePage = () => {
               email: data.email,
               phone_number: data.phone_number,
               avatar: data.avatar || "https://via.placeholder.com/150",
+              wishlist: data.wishlist || ""
             };
             setUser(userData);
             setEditedUser(userData); // Initialize editedUser
@@ -70,6 +76,7 @@ const ProfilePage = () => {
     if (editedUser) {
       try {
         const { avatar, ...userDetails } = editedUser;
+        console.log(editedUser);
         const response = await fetch("http://127.0.0.1:8000/updateUser", {
           method: "POST",
           headers: {
@@ -157,6 +164,34 @@ const ProfilePage = () => {
                   />
                 ) : (
                   user.phone_number
+                )}
+              </p>
+              <p className="text-[#43291f]">
+                <strong>Wishlist:</strong>{" "}
+                {isEditing ? (
+                  <div>
+                    {wishlistItems.map((item, index) => (
+                      <label key={index} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={editedUser?.wishlist?.includes(item) || false}
+                          onChange={(e) => {
+                            setEditedUser((prev) => {
+                              if (!prev) return null;
+                              const updatedWishlist = e.target.checked
+                                ? [...(prev.wishlist || []), item] // Add item
+                                : (prev.wishlist || []).filter((i: string) => i !== item); // Remove item
+                              return { ...prev, wishlist: updatedWishlist };
+                            });
+                          }}
+                          className="text-[#43291f]"
+                        />
+                        <span>{item}</span>
+                      </label>
+                    ))}
+                  </div>
+                ) : (
+                  user.wishlist.join(", ")
                 )}
               </p>
             </div>
