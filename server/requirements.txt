@@ -1,0 +1,15 @@
+Pillow
+numpy
+pandas
+opencv-python
+yolov5
+keras
+ultralytics
+fastapi
+pydantic
+mysql-connector-python
+pprintpp
+typing-extensions
+huggingface_hub
+fastai
+fastcore
